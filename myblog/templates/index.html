@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resources and Insights - Blog</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .text-brand-purple { color: #6941C6; }
+        .bg-brand-purple { background-color: #6941C6; }
+        .bg-brand-light { background-color: #F9F5FF; }
+        .border-brand-purple { border-color: #6941C6; }
+        .hover-bg-brand-dark:hover { background-color: #5835A6; }
+        .nav-active { color: #111827; background-color: #F9F5FF; font-weight: 600; }
+    </style>
+</head>
+<body class="bg-white text-gray-800 antialiased relative">
+
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <span class="text-xl font-bold text-brand-purple mr-8 tracking-tight cursor-pointer">HeyVerse</span>
+                    <div class="hidden md:flex space-x-4">
+                        <a href="{% url 'home' %}" class="nav-active px-3 py-2 rounded-md text-sm transition-colors duration-200">Home</a>
+                        {% if user.is_authenticated and user.is_staff %}
+                            <a href="{% url 'postBlog' %}" class="text-gray-500 hover:text-brand-purple hover:bg-gray-50 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Write Blog</a>
+                        {% endif %}
+                        <a href="{% url 'aboutUsPage' %}" class="text-gray-500 hover:text-brand-purple hover:bg-gray-50 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">About Us</a>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'profile' user.id %}" class="text-brand-purple text-sm font-medium mr-4">Hi, {{ user.username }}</a>
+                        <a href="/logout/" class="text-brand-purple text-sm font-medium">Logout</a>
+                    {% else %}
+                        <button id="navbarLoginBtn" class="bg-brand-purple text-white px-5 py-2 rounded-lg text-sm font-medium hover-bg-brand-dark transition shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+                            Log in
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="text-center mb-12">
+            <p class="text-brand-purple font-semibold mb-3">HeyVerse — Think. Explore. Create.</p>
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4 tracking-tight">Resources and insights</h1>
+            <p class="text-xl text-gray-500 max-w-2xl mx-auto">Ideas, Projects, Mindset & the Future of Tech — explore everything that shapes tomorrow.</p>
+        </div>
+
+        <div class="max-w-md mx-auto mb-16 relative">
+            <form action="#" method="GET" class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </div>
+                <input type="text" name="q" class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 sm:text-sm shadow-sm" placeholder="Search">
+            </form>
+        </div>
+        {% for item in posts %}
+
+        <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            <article class="flex flex-col overflow-hidden rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-100">
+                <div class="flex-shrink-0"><img class="h-60 w-full object-cover" src={{item.image}} alt="Blog cover"></div>
+                <div class="flex-1 bg-white p-6 flex flex-col justify-between">
+                    <div class="flex-1">
+                        <p class="text-sm font-semibold text-brand-purple">{{item.author.username}}</p>
+                        <a href="{% url 'view-blog' item.id %}" class="block mt-2 group">
+                            <p class="text-xl font-bold text-gray-900 group-hover:text-purple-700 transition-colors">{{item.title}}</p>
+                            <p class="mt-3 text-base text-gray-500 line-clamp-3">{{item.content|safe}}</p>
+                        </a>
+                    </div>
+                </div>
+            </article>
+
+            {% endfor %}
+            <!-- <article class="flex flex-col overflow-hidden rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-100">
+                <div class="flex-shrink-0"><img class="h-60 w-full object-cover" src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Blog cover"></div>
+                <div class="flex-1 bg-white p-6 flex flex-col justify-between">
+                    <div class="flex-1">
+                        <p class="text-sm font-semibold text-brand-purple">Product</p>
+                        <a href="#" class="block mt-2 group">
+                            <p class="text-xl font-bold text-gray-900 group-hover:text-purple-700 transition-colors">Migrating to Linear 101</p>
+                            <p class="mt-3 text-base text-gray-500 line-clamp-3">Linear helps streamline software projects, sprints, tasks, and bug tracking.</p>
+                        </a>
+                    </div>
+                </div>
+            </article>
+            <article class="flex flex-col overflow-hidden rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-100">
+                <div class="flex-shrink-0"><img class="h-60 w-full object-cover" src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Blog cover"></div>
+                <div class="flex-1 bg-white p-6 flex flex-col justify-between">
+                    <div class="flex-1">
+                        <p class="text-sm font-semibold text-brand-purple">Engineering</p>
+                        <a href="#" class="block mt-2 group">
+                            <p class="text-xl font-bold text-gray-900 group-hover:text-purple-700 transition-colors">Building your API Stack</p>
+                            <p class="mt-3 text-base text-gray-500 line-clamp-3">The rise of RESTful APIs has been met by a rise in tools.</p>
+                        </a>
+                    </div>
+                </div>
+            </article> -->
+        </div>
+    </main>
+
+    <div id="loginModal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity modal-overlay"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            
+            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md w-full">
+                <div class="absolute top-0 right-0 pt-4 pr-4">
+                    <button type="button" class="close-modal-btn bg-white rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                        <span class="sr-only">Close</span>
+                        <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                    </button>
+                </div>
+
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start w-full justify-center">
+                        <div class="mt-3 text-center sm:mt-0 sm:text-left w-full">
+                            <div class="flex flex-col items-center mb-4">
+                                <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-brand-light mb-4">
+                                    <svg class="h-6 w-6 text-brand-purple" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" /></svg>
+                                </div>
+                                <h3 class="text-lg leading-6 font-medium text-gray-900">Log in to your account</h3>
+                                <p class="text-sm text-gray-500 mt-1">Welcome back! Please enter your details.</p>
+                            </div>
+
+                            <form id="loginForm" class="space-y-4 px-2">
+                                {% csrf_token %}
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Email</label>
+                                    <input type="email" name="email" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm" placeholder="you@example.com">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Password</label>
+                                    <input type="password" name="password" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm" placeholder="••••••••">
+                                </div>
+                                <div>
+                                    <button type="button" id="triggerForgot" class="text-sm font-medium text-brand-purple hover:text-brand-dark focus:outline-none">Forgot your password? Click here</button>
+                                </div>
+                                <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-brand-purple hover-bg-brand-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">Sign In</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 px-4 py-3 sm:px-6 flex justify-center">
+                    <p class="text-sm text-gray-500">
+                        New user? 
+                        <button id="triggerSignup" class="font-medium text-brand-purple hover:text-purple-500 focus:outline-none">Sign up</button>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="signupModal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity modal-overlay"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            
+            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md w-full">
+                <div class="absolute top-0 right-0 pt-4 pr-4">
+                    <button type="button" class="close-modal-btn bg-white rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                        <span class="sr-only">Close</span>
+                        <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                    </button>
+                </div>
+
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start w-full justify-center">
+                        <div class="mt-3 text-center sm:mt-0 sm:text-left w-full">
+                            <div class="flex flex-col items-center mb-4">
+                                <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-brand-light mb-4">
+                                    <svg class="h-6 w-6 text-brand-purple" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" /></svg>
+                                </div>
+                                <h3 class="text-lg leading-6 font-medium text-gray-900">Create an account</h3>
+                                <p class="text-sm text-gray-500 mt-1">Start your 30-day free trial.</p>
+                            </div>
+
+                            <form id="signupForm" class="space-y-4 px-2">
+                                {% csrf_token %}
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Username</label>
+                                    <input type="text" name="username" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm" placeholder="Olivia Rhye">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Email</label>
+                                    <input type="email" name="email" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm" placeholder="you@example.com">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Password</label>
+                                    <input type="password" name="password" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm" placeholder="••••••••">
+                                </div>
+                                <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-brand-purple hover-bg-brand-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">Get Started</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 px-4 py-3 sm:px-6 flex justify-center">
+                    <p class="text-sm text-gray-500">
+                        Already have an account? 
+                        <button id="triggerLogin" class="font-medium text-brand-purple hover:text-purple-500 focus:outline-none">Log in</button>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="forgotModal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity modal-overlay"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            
+            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md w-full">
+                
+                <div class="absolute top-0 right-0 pt-4 pr-4">
+                    <button type="button" class="close-modal-btn bg-white rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                        <span class="sr-only">Close</span>
+                        <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                    </button>
+                </div>
+
+                <div id="step-email" class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="flex flex-col items-center mb-4">
+                        <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-brand-light mb-4">
+                            <svg class="h-6 w-6 text-brand-purple" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11.536 17 9 19l-3-3-2 2-2-2 4.464-4.464A6 6 0 0115 7z" /> 
+                            </svg>
+                        </div>
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Forgot password?</h3>
+                        <p class="text-sm text-center text-gray-500 mt-1">No worries, we'll send you reset instructions.</p>
+                    </div>
+                    <form id="forgotEmailForm" class="space-y-4 px-2">
+                        {% csrf_token %}
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Email</label>
+                            <input type="email" name="email" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm" placeholder="Enter your email">
+                        </div>
+                        <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-brand-purple hover-bg-brand-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">Send Code</button>
+                    </form>
+                    <div class="mt-4 text-center">
+                        <button class="back-to-login text-sm font-medium text-gray-500 hover:text-gray-900 flex items-center justify-center w-full focus:outline-none">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                            Back to log in
+                        </button>
+                    </div>
+                </div>
+
+                <div id="step-otp" class="hidden bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="flex flex-col items-center mb-4">
+                        <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-brand-light mb-4">
+                            <svg class="h-6 w-6 text-brand-purple" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Password reset sent</h3>
+                        <p class="text-sm text-center text-gray-500 mt-1">We've sent a 6-digit code to your email.</p>
+                    </div>
+                    <form id="otpForm" class="space-y-4 px-2">
+                        {% csrf_token %}
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Enter OTP</label>
+                            <input type="text" name="OTP" maxlength="6" class="mt-1 block w-full text-center tracking-[0.5em] font-bold text-xl border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-purple-500 focus:border-purple-500" placeholder="000000">
+                        </div>
+                        <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-brand-purple hover-bg-brand-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">Verify Code</button>
+                    </form>
+                    <div class="mt-4 text-center">
+                        <p class="text-sm text-gray-500">Didn't receive the email? <a href="#" class="text-brand-purple font-medium">Click to resend</a></p>
+                        <button class="back-to-login mt-4 text-sm font-medium text-gray-500 hover:text-gray-900 flex items-center justify-center w-full focus:outline-none">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                            Back to log in
+                        </button>
+                    </div>
+                </div>
+
+                <div id="step-reset" class="hidden bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="flex flex-col items-center mb-4">
+                        <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-brand-light mb-4">
+                            <svg class="h-6 w-6 text-brand-purple" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Set new password</h3>
+                        <p class="text-sm text-center text-gray-500 mt-1">Must be at least 8 characters.</p>
+                    </div>
+                    <form id="resetPassForm" class="space-y-4 px-2">
+                        {% csrf_token %}
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">New Password</label>
+                            <input type="password" name="new_password" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm" placeholder="••••••••">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Confirm Password</label>
+                            <input type="password" name="confirm_password" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm" placeholder="••••••••">
+                        </div>
+                        <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-brand-purple hover-bg-brand-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">Reset Password</button>
+                    </form>
+                    <div class="mt-4 text-center">
+                        <button class="back-to-login text-sm font-medium text-gray-500 hover:text-gray-900 flex items-center justify-center w-full focus:outline-none">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                            Back to log in
+                        </button>
+                    </div>
+                </div>
+
+                <div id="step-success" class="hidden bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="flex flex-col items-center mb-4">
+                        <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
+                            <svg class="h-6 w-6 text-green-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                            </svg>
+                        </div>
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Password reset</h3>
+                        <p class="text-sm text-center text-gray-500 mt-1">Your password has been successfully reset. Click below to log in magically.</p>
+                    </div>
+                    <div class="px-2">
+                        <button type="button" class="back-to-login w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-brand-purple hover-bg-brand-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">Continue to Log in</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+        <footer class="bg-white border-t border-gray-100 mt-0">
+        <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center">
+            <div class="flex items-center mb-4 md:mb-0">
+                <span class="text-xl font-bold font-serif text-gray-900">HeyVerse</span>
+                <p class="ml-4 text-sm text-gray-500">© 2025 All rights reserved. A tiny but passionate community of builders and thinkers.</p>
+
+            </div>
+            <div class="flex space-x-6 text-gray-400">
+                <a href="#" class="hover:text-brand-purple transition">Twitter</a>
+                <a href="#" class="hover:text-brand-purple transition">LinkedIn</a>
+                <a href="#" class="hover:text-brand-purple transition">GitHub</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // --- ELEMENTS ---
+        const navbarLoginBtn = document.getElementById('navbarLoginBtn');
+        const loginModal = document.getElementById('loginModal');
+        const signupModal = document.getElementById('signupModal');
+        const forgotModal = document.getElementById('forgotModal');
+        
+        // Triggers inside modals
+        const triggerSignup = document.getElementById('triggerSignup'); 
+        const triggerLogin = document.getElementById('triggerLogin');   
+        const triggerForgot = document.getElementById('triggerForgot'); 
+        
+        // Back to Login triggers inside Forgot Modal
+        const backToLoginBtns = document.querySelectorAll('.back-to-login');
+
+        // Close Elements
+        const closeButtons = document.querySelectorAll('.close-modal-btn');
+        const overlays = document.querySelectorAll('.modal-overlay');
+
+        // --- FUNCTIONS ---
+
+        function closeAllModals() {
+            loginModal.classList.add('hidden');
+            signupModal.classList.add('hidden');
+            forgotModal.classList.add('hidden');
+        }
+
+        function openLogin() {
+            closeAllModals();
+            loginModal.classList.remove('hidden');
+        }
+
+        function openSignup() {
+            closeAllModals();
+            signupModal.classList.remove('hidden');
+        }
+
+        function openForgot() {
+            closeAllModals();
+            forgotModal.classList.remove('hidden');
+            goToStep('step-email'); 
+        }
+
+        function goToStep(stepId) {
+            document.getElementById('step-email').classList.add('hidden');
+            document.getElementById('step-otp').classList.add('hidden');
+            document.getElementById('step-reset').classList.add('hidden');
+            document.getElementById('step-success').classList.add('hidden');
+            document.getElementById(stepId).classList.remove('hidden');
+        }
+
+        // --- AJAX HELPER ---
+        async function sendData(url, formData) {
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+                return await response.json();
+            } catch (error) {
+                console.error("Error:", error);
+                return { success: false, message: "Network error occurred." };
+            }
+        }
+
+        // --- FORM SUBMISSION HANDLERS ---
+
+        document.getElementById('signupForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.submitter;
+            const originalText = btn.innerText;
+            btn.innerText = "Processing...";
+            
+            const data = await sendData('/signup/', new FormData(e.target));
+            
+            btn.innerText = originalText;
+
+            if (data.success) {
+                alert(data.message);
+                openLogin();
+            } else {
+                alert("Error: " + data.message);
+            }
+        });
+
+        document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.submitter;
+            const originalText = btn.innerText;
+            btn.innerText = "Logging in...";
+
+            const data = await sendData('/login/', new FormData(e.target));
+            
+            btn.innerText = originalText;
+
+            if (data.success) {
+                location.reload(); 
+            } else {
+                alert(data.message);
+            }
+        });
+
+        document.getElementById('forgotEmailForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.submitter;
+            const originalText = btn.innerText;
+            btn.innerText = "Sending...";
+
+            const data = await sendData('/forgot-password/', new FormData(e.target));
+
+            btn.innerText = originalText;
+
+            if (data.success) {
+                goToStep('step-otp');
+            } else {
+                alert(data.message);
+            }
+        });
+
+        document.getElementById('otpForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const data = await sendData('/verify-otp/', new FormData(e.target));
+
+            if (data.success) {
+                goToStep('step-reset');
+            } else {
+                alert(data.message);
+            }
+        });
+
+        document.getElementById('resetPassForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const data = await sendData('/change-password/', new FormData(e.target));
+
+            if (data.success) {
+                goToStep('step-success');
+            } else {
+                alert(data.message);
+            }
+        });
+
+        if(navbarLoginBtn) navbarLoginBtn.addEventListener('click', openLogin);
+        if(triggerSignup) triggerSignup.addEventListener('click', openSignup);
+        if(triggerLogin) triggerLogin.addEventListener('click', openLogin);
+        if(triggerForgot) triggerForgot.addEventListener('click', openForgot);
+
+        backToLoginBtns.forEach(btn => btn.addEventListener('click', openLogin));
+        closeButtons.forEach(btn => btn.addEventListener('click', closeAllModals));
+        overlays.forEach(overlay => overlay.addEventListener('click', closeAllModals));
+
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ post.title }} - Blog</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, h4, h5, h6 { font-family: 'Playfair Display', serif; }
+        .prose p { margin-bottom: 1.5rem; line-height: 1.8; color: #374151; }
+        .prose h2 { font-size: 1.5rem; font-weight: 700; margin-top: 2rem; margin-bottom: 1rem; color: #111827; }
+        .prose ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1.5rem; }
+        .text-brand-purple { color: #6941C6; }
+        .bg-brand-purple { background-color: #6941C6; }
+        .bg-brand-light { background-color: #F9F5FF; }
+        .border-brand-purple { border-color: #6941C6; }
+        .hover-bg-brand-dark:hover { background-color: #5835A6; }
+        .nav-active { color: #111827; background-color: #F9F5FF; font-weight: 600; }
+    </style>
+</head>
+<body class="bg-white text-gray-800 antialiased">
+
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <span class="text-xl font-bold text-brand-purple mr-8 tracking-tight cursor-pointer">HeyVerse</span>
+                    <div class="hidden md:flex space-x-4">
+                        <a href="{% url 'home' %}" class="nav-active px-3 py-2 rounded-md text-sm transition-colors duration-200">Home</a>
+                        {% if user.is_authenticated and user.is_staff %}
+                            <a href="{% url 'postBlog' %}" class="text-gray-500 hover:text-brand-purple hover:bg-gray-50 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Write Blog</a>
+                        {% endif %}
+                        <a href="{% url 'aboutUsPage' %}" class="text-gray-500 hover:text-brand-purple hover:bg-gray-50 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">About Us</a>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'profile' user.id %}" class="text-brand-purple text-sm font-medium mr-4">Hi, {{ user.username }}</a>
+                        <a href="/logout/" class="text-brand-purple text-sm font-medium">Logout</a>
+                    {% else %}
+                        <button id="navbarLoginBtn" class="bg-brand-purple text-white px-5 py-2 rounded-lg text-sm font-medium hover-bg-brand-dark transition shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+                            Log in
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+        <div class="mb-8">
+            
+            <h1 class="text-4xl sm:text-5xl font-bold text-gray-900 leading-tight mb-4">
+                {{ blog.title }}
+            </h1>
+
+            <div class="flex items-center text-gray-500 text-sm mb-8">
+                <span>{{ blog.publish_date|date:"M d, Y" }}</span>
+
+            </div>
+
+            {% if blog.image %}
+            <div class="rounded-xl overflow-hidden mb-8 shadow-sm">
+                <img src="{{ blog.image }}" alt="{{ post.title }}" class="w-full h-auto object-cover max-h-[500px]">
+            </div>
+            {% endif %}
+
+            <div class="flex items-center mb-10 border-b border-gray-100 pb-8">
+                <div class="h-10 w-10 rounded-full bg-gray-200 overflow-hidden mr-3">
+                    <img src="https://ui-avatars.com/api/?name={{ post.author }}&background=6941C6&color=fff" alt="Author">
+                </div>
+                <div>
+                    <p class="text-sm font-bold text-gray-900">{{ blog.author.username}}</p>
+                </div>
+            </div>
+        </div>
+
+        <article class="prose max-w-none">
+            
+            <p class="text-lg text-gray-600 leading-relaxed mb-8">
+                {{blog.content|safe}}
+            </p>
+
+            <!-- <div class="bg-gray-50 rounded-lg p-6 mb-10 border border-gray-100">
+                <h3 class="text-lg font-bold text-gray-900 mb-4 mt-0 font-sans">In this article</h3>
+                <ul class="space-y-2 text-sm text-gray-600 list-none pl-0 mb-0">
+                    <li><a href="#" class="hover:text-purple-600 underline decoration-purple-300 decoration-2 underline-offset-2">How to travel without spending a dime</a></li>
+                    <li><a href="#" class="hover:text-purple-600 underline decoration-purple-300 decoration-2 underline-offset-2">Get the most out of your credit card reward points</a></li>
+                    <li><a href="#" class="hover:text-purple-600 underline decoration-purple-300 decoration-2 underline-offset-2">Why you don't need more than 3 pieces of clothing</a></li>
+                </ul>
+            </div> -->
+
+            <div class="text-gray-800">
+                {{ post.content|safe }}
+            </div>
+
+        </article>
+
+        <div class="mt-16 pt-10 border-t border-gray-200">
+            <h3 class="text-2xl font-bold font-serif text-gray-900 mb-6">Keep reading</h3>
+            {% if suggestions %}
+                {% for suggestion in suggestions %}
+                    <div class="space-y-6">
+                        <a href="#" class="group flex gap-4 items-start">
+                            <div class="w-24 h-24 sm:w-32 sm:h-24 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100">
+                                <img src="{{ suggestion.image}}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-bold text-gray-900 group-hover:text-purple-600 transition font-serif leading-tight mb-2">
+                                    {{suggestion.title}}
+                                </h4>
+                                <p class="text-sm text-gray-500 line-clamp-2">{{suggestion.content|safe}}</p>
+                            </div>
+                        </a>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+
+        <div class="mt-16 bg-gray-50 rounded-xl p-6 sm:p-8 flex flex-col sm:flex-row items-center sm:items-start gap-6 border border-gray-100">
+            <div class="flex-shrink-0">
+                <img src="https://ui-avatars.com/api/?name={{ post.author_name }}&background=6941C6&color=fff&size=128" alt="Author" class="w-20 h-20 rounded-full border-4 border-white shadow-sm">
+            </div>
+            <div class="text-center sm:text-left">
+                <p class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-1">Written by</p>
+                <h4 class="text-xl font-bold text-gray-900 font-serif mb-3">{{ blog.author.username }}</h4>
+                <p class="text-gray-600 text-sm leading-relaxed">
+                    {{user.description}}
+                </p>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="mt-20 border-t border-gray-100 bg-white">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
+                
+               <div class="bg-[#1D2939] rounded-2xl p-8 text-white">
+                    <h3 class="text-xl font-serif font-bold mb-2">How to Join HeyVerse</h3>
+                    <p class="text-gray-300 text-sm mb-4">
+                        Want to contribute to our projects, share your ideas, or collaborate with us? 
+                        We’re always excited to connect with curious minds, developers, and creators 
+                        who believe in building the future.
+                    </p>
+                    <p class="text-gray-300 text-sm">
+                        If you'd like to be a part of the HeyVerse community or work with us on upcoming innovations, 
+                        feel free to reach out at:
+                        <br>
+                        <span class="font-semibold text-white">teamheylater@gmail.com</span>
+                    </p>
+                </div>
+
+
+                <div class="grid grid-cols-2 gap-8 md:pl-12 pt-4">
+                    <div>
+                        <h4 class="font-bold text-gray-900 mb-4">Navigation</h4>
+                        <ul class="space-y-3 text-sm text-gray-600">
+                            <li><a href="{% url 'home' %}" class="hover:text-purple-600">Home</a></li>
+                            <li><a href="{% url 'aboutUsPage' %}" class="hover:text-purple-600">About</a></li>
+                            <li><a href="#" class="hover:text-purple-600">Contact</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-gray-900 mb-4">Resources</h4>
+                        <ul class="space-y-3 text-sm text-gray-600">
+                            <li><a href="#" class="hover:text-purple-600">Style Guide</a></li>
+                            <li><a href="#" class="hover:text-purple-600">Instructions</a></li>
+                            <li><a href="#" class="hover:text-purple-600">Changelog</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-12 pt-8 border-t border-gray-100 flex flex-col sm:flex-row justify-between items-center text-sm text-gray-500">
+                <p>© 2025 All rights reserved. A tiny but passionate community of builders and thinkers</p>
+                <div class="flex space-x-6 mt-4 sm:mt-0">
+                    <a href="#" class="hover:text-brand-purple transition">Twitter</a>
+                    <a href="#" class="hover:text-brand-purple transition">LinkedIn</a>
+                    <a href="#" class="hover:text-brand-purple transition">GitHub</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // --- ELEMENTS ---
+        const navbarLoginBtn = document.getElementById('navbarLoginBtn');
+        const loginModal = document.getElementById('loginModal');
+        const signupModal = document.getElementById('signupModal');
+        const forgotModal = document.getElementById('forgotModal');
+        
+        // Triggers inside modals
+        const triggerSignup = document.getElementById('triggerSignup'); 
+        const triggerLogin = document.getElementById('triggerLogin');   
+        const triggerForgot = document.getElementById('triggerForgot'); 
+        
+        // Back to Login triggers inside Forgot Modal
+        const backToLoginBtns = document.querySelectorAll('.back-to-login');
+
+        // Close Elements
+        const closeButtons = document.querySelectorAll('.close-modal-btn');
+        const overlays = document.querySelectorAll('.modal-overlay');
+
+        // --- FUNCTIONS ---
+
+        function closeAllModals() {
+            loginModal.classList.add('hidden');
+            signupModal.classList.add('hidden');
+            forgotModal.classList.add('hidden');
+        }
+
+        function openLogin() {
+            closeAllModals();
+            loginModal.classList.remove('hidden');
+        }
+
+        function openSignup() {
+            closeAllModals();
+            signupModal.classList.remove('hidden');
+        }
+
+        function openForgot() {
+            closeAllModals();
+            forgotModal.classList.remove('hidden');
+            goToStep('step-email'); 
+        }
+
+        function goToStep(stepId) {
+            document.getElementById('step-email').classList.add('hidden');
+            document.getElementById('step-otp').classList.add('hidden');
+            document.getElementById('step-reset').classList.add('hidden');
+            document.getElementById('step-success').classList.add('hidden');
+            document.getElementById(stepId).classList.remove('hidden');
+        }
+
+        // --- AJAX HELPER ---
+        async function sendData(url, formData) {
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+                return await response.json();
+            } catch (error) {
+                console.error("Error:", error);
+                return { success: false, message: "Network error occurred." };
+            }
+        }
+
+        // --- FORM SUBMISSION HANDLERS ---
+
+    
+        document.getElementById('signupForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.submitter;
+            const originalText = btn.innerText;
+            btn.innerText = "Processing...";
+            
+         
+            const data = await sendData('/signup/', new FormData(e.target));
+            
+            btn.innerText = originalText;
+
+            if (data.success) {
+                alert(data.message);
+                openLogin();
+            } else {
+                alert("Error: " + data.message);
+            }
+        });
+
+        // 2. LOGIN
+        document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.submitter;
+            const originalText = btn.innerText;
+            btn.innerText = "Logging in...";
+
+            const data = await sendData('/login/', new FormData(e.target));
+            
+            btn.innerText = originalText;
+
+            if (data.success) {
+                location.reload(); 
+            } else {
+                alert(data.message);
+            }
+        });
+
+        
+        document.getElementById('forgotEmailForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.submitter;
+            const originalText = btn.innerText;
+            btn.innerText = "Sending...";
+
+            
+            const data = await sendData('/forgot-password/', new FormData(e.target));
+
+            btn.innerText = originalText;
+
+            if (data.success) {
+                goToStep('step-otp');
+            } else {
+                alert(data.message);
+            }
+        });
+
+     
+        document.getElementById('otpForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+           
+            const data = await sendData('/verify-otp/', new FormData(e.target));
+
+            if (data.success) {
+                goToStep('step-reset');
+            } else {
+                alert(data.message);
+            }
+        });
+
+        // 5. RESET PASSWORD
+        document.getElementById('resetPassForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+           
+            const data = await sendData('/change-password/', new FormData(e.target));
+
+            if (data.success) {
+                goToStep('step-success');
+            } else {
+                alert(data.message);
+            }
+        });
+
+      
+        if(navbarLoginBtn) navbarLoginBtn.addEventListener('click', openLogin);
+        if(triggerSignup) triggerSignup.addEventListener('click', openSignup);
+        if(triggerLogin) triggerLogin.addEventListener('click', openLogin);
+        if(triggerForgot) triggerForgot.addEventListener('click', openForgot);
+
+        backToLoginBtns.forEach(btn => btn.addEventListener('click', openLogin));
+        closeButtons.forEach(btn => btn.addEventListener('click', closeAllModals));
+        overlays.forEach(overlay => overlay.addEventListener('click', closeAllModals));
+
+    </script>
+
+</body>
+</html>
