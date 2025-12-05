@@ -97,16 +97,20 @@ WSGI_APPLICATION = 'Personal_Blog.wsgi.application'
 #     }
 # }
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'myblogdb',          
-        'USER': 'postgres',          
-        'PASSWORD': 'pandey@123', 
-        'HOST': 'localhost',             
-        'PORT': '5432',                  
-    }
-}
+
+
+
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'myblogdb',          
+#         'USER': 'postgres',          
+#         'PASSWORD': 'pandey@123', 
+#         'HOST': 'localhost',             
+#         'PORT': '5432',                  
+#     }
+# }
 
 
 EMAIL_BACKEND=os.getenv("EMAIL_BACKEND")
